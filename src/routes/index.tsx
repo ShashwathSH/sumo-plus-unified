@@ -1,29 +1,46 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Hero } from "@/components/sumo/Hero";
+import {
+  WhatIsITS,
+  WhySimulation,
+  Tools,
+  NetEdit,
+  Limitations,
+  IntroSUMOpp,
+  WorkflowTimeline,
+  Contributions,
+  TechStack,
+  DemoSection,
+  Footer,
+} from "@/components/sumo/sections";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "SUMO++ — Intelligent Transportation Simulation Platform" },
+      { name: "description", content: "A unified traffic simulation platform integrating OpenStreetMap, SUMO, NetEdit and TraCI for intelligent transportation research." },
+      { property: "og:title", content: "SUMO++ — Intelligent Transportation Simulation Platform" },
+      { property: "og:description", content: "Unified traffic simulation, visualization and experimentation for ITS research." },
     ],
   }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="relative min-h-screen overflow-hidden">
+      <Hero />
+      <WhatIsITS />
+      <WhySimulation />
+      <Tools />
+      <NetEdit />
+      <Limitations />
+      <IntroSUMOpp />
+      <WorkflowTimeline />
+      <Contributions />
+      <TechStack />
+      <DemoSection />
+      <Footer />
+    </main>
   );
 }

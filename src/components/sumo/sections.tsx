@@ -5,10 +5,91 @@ import {
   TrafficCone, FlaskConical, GraduationCap, TrendingUp, Users, Workflow,
   Network, FileCode2, Terminal, Layers, AlertTriangle, CheckCircle2,
   Map, Cog, Play, BarChart3, Rocket, Globe2, Cpu, Boxes, Wrench, Eye,
-  ChevronRight, ExternalLink, Activity,
+  ChevronRight, ExternalLink, Activity, X, ZoomIn,
 } from "lucide-react";
 import { SectionHeading } from "./SectionHeading";
 import { Reveal } from "./Reveal";
+import sumoImg from "@/assets/sumo.png.asset.json";
+import neteditImg from "@/assets/netedit.png.asset.json";
+import vissimImg from "@/assets/vissim.png.asset.json";
+import aimsunImg from "@/assets/aimsun.png.asset.json";
+import sumoppImg from "@/assets/sumopp-ui.png.asset.json";
+
+/* ============ SCREENSHOT CARD (glass + hover zoom + lightbox) ============ */
+function ScreenshotCard({
+  src,
+  alt,
+  caption,
+  featured = false,
+}: {
+  src: string;
+  alt: string;
+  caption: string;
+  featured?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <figure className="group w-full">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={`Enlarge ${alt}`}
+          className={`relative block w-full overflow-hidden rounded-2xl glass-strong p-2 ring-1 ring-white/10 transition-shadow hover:shadow-[var(--shadow-elegant)] ${
+            featured ? "md:p-3" : ""
+          }`}
+        >
+          <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black/30">
+            <img
+              src={src}
+              alt={alt}
+              loading="lazy"
+              className="h-full w-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+            <div className="pointer-events-none absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-cyan-brand opacity-0 ring-1 ring-cyan-brand/30 backdrop-blur transition-opacity group-hover:opacity-100">
+              <ZoomIn className="size-3" /> Click to enlarge
+            </div>
+          </div>
+        </button>
+        <figcaption className="mt-3 text-center text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+          {caption}
+        </figcaption>
+      </figure>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-xl"
+          >
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-h-[90vh] w-full max-w-6xl overflow-hidden rounded-2xl glass-strong p-3"
+            >
+              <button
+                onClick={() => setOpen(false)}
+                aria-label="Close"
+                className="absolute right-4 top-4 z-10 grid size-9 place-items-center rounded-full bg-black/60 text-foreground ring-1 ring-white/20 transition hover:bg-black/80"
+              >
+                <X className="size-4" />
+              </button>
+              <img src={src} alt={alt} className="max-h-[80vh] w-full rounded-xl object-contain" />
+              <div className="mt-3 text-center text-sm text-muted-foreground">{caption}</div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
 
 /* ============ SECTION 2: WHAT IS ITS ============ */
 const itsCards = [
@@ -147,7 +228,8 @@ const tools = [
     color: "from-emerald-400/40 to-cyan-400/30",
     description: "Simulation of Urban MObility — a free, open-source microscopic traffic simulator developed by DLR.",
     bullets: ["Open-source & free", "Microscopic simulation", "Highly customizable", "Research-oriented"],
-    placeholder: "SUMO GUI Screenshot",
+    image: sumoImg.url,
+    caption: "SUMO GUI: Microscopic Traffic Simulation Environment",
   },
   {
     name: "VISSIM",
@@ -155,7 +237,8 @@ const tools = [
     color: "from-blue-400/40 to-indigo-400/30",
     description: "PTV VISSIM — industry-standard commercial microscopic simulator used by transportation agencies worldwide.",
     bullets: ["Commercial simulator", "Widely used in industry", "Advanced behavioral modeling", "Enterprise support"],
-    placeholder: "VISSIM Screenshot",
+    image: vissimImg.url,
+    caption: "PTV VISSIM: Commercial Traffic Simulation Platform",
   },
   {
     name: "AIMSUN",
@@ -163,7 +246,8 @@ const tools = [
     color: "from-cyan-400/40 to-sky-400/30",
     description: "Aimsun Next — large-scale traffic modeling & management platform for cities and highway operators.",
     bullets: ["Traffic planning & management", "Large-scale networks", "Hybrid simulation", "Real-time operations"],
-    placeholder: "AIMSUN Screenshot",
+    image: aimsunImg.url,
+    caption: "AIMSUN: Advanced Traffic Planning and Simulation Tool",
   },
 ];
 
@@ -182,44 +266,44 @@ export function Tools() {
             const isOpen = open === i;
             return (
               <Reveal key={t.name} delay={i * 0.08}>
-                <motion.button
+                <motion.div
                   layout
-                  onClick={() => setOpen(isOpen ? null : i)}
                   whileHover={{ y: -6 }}
-                  className="group block w-full overflow-hidden rounded-2xl glass p-6 text-left transition-shadow hover:shadow-[var(--shadow-elegant)]"
+                  className="group block h-full w-full overflow-hidden rounded-2xl glass p-6 text-left transition-shadow hover:shadow-[var(--shadow-elegant)]"
                 >
-                  <div className={`mb-5 aspect-video w-full rounded-xl bg-gradient-to-br ${t.color} ring-1 ring-white/10 grid place-items-center text-xs font-medium uppercase tracking-[0.18em] text-foreground/70`}>
-                    <div className="flex flex-col items-center gap-2">
-                      <Eye className="size-6 opacity-70" />
-                      {t.placeholder}
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
+                  <ScreenshotCard src={t.image} alt={`${t.name} screenshot`} caption={t.caption} />
+                  <div className="mt-5 flex items-center justify-between">
                     <h3 className="text-2xl font-semibold text-foreground">{t.name}</h3>
                     <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-medium text-cyan-brand">{t.tag}</span>
                   </div>
                   <p className="mt-2 text-sm text-muted-foreground">{t.description}</p>
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.ul
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                        className="mt-4 space-y-2 overflow-hidden text-sm"
-                      >
-                        {t.bullets.map((b) => (
-                          <li key={b} className="flex items-center gap-2 text-foreground/90">
-                            <ChevronRight className="size-3.5 text-cyan-brand" /> {b}
-                          </li>
-                        ))}
-                      </motion.ul>
-                    )}
-                  </AnimatePresence>
-                  <div className="mt-4 text-xs font-medium text-cyan-brand">
-                    {isOpen ? "Click to collapse" : "Click to expand"}
-                  </div>
-                </motion.button>
+                  <button
+                    type="button"
+                    onClick={() => setOpen(isOpen ? null : i)}
+                    className="mt-3 w-full text-left"
+                  >
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.ul
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                          className="mt-1 space-y-2 overflow-hidden text-sm"
+                        >
+                          {t.bullets.map((b) => (
+                            <li key={b} className="flex items-center gap-2 text-foreground/90">
+                              <ChevronRight className="size-3.5 text-cyan-brand" /> {b}
+                            </li>
+                          ))}
+                        </motion.ul>
+                      )}
+                    </AnimatePresence>
+                    <div className="mt-3 text-xs font-medium text-cyan-brand">
+                      {isOpen ? "Click to collapse details" : "Click to view details"}
+                    </div>
+                  </button>
+                </motion.div>
               </Reveal>
             );
           })}
@@ -246,17 +330,11 @@ export function NetEdit() {
         />
         <div className="mt-14 grid gap-8 lg:grid-cols-2 lg:items-center">
           <Reveal>
-            <div className="aspect-video w-full rounded-2xl glass-strong p-1">
-              <div className="grid h-full w-full place-items-center rounded-xl bg-gradient-to-br from-blue-400/20 via-cyan-400/10 to-transparent ring-1 ring-white/10">
-                <div className="flex flex-col items-center gap-3 text-center">
-                  <Network className="size-10 text-cyan-brand" />
-                  <div className="text-sm font-medium uppercase tracking-[0.2em] text-foreground/70">
-                    NetEdit Screenshot
-                  </div>
-                  <div className="text-xs text-muted-foreground">Graphical network editor for SUMO</div>
-                </div>
-              </div>
-            </div>
+            <ScreenshotCard
+              src={neteditImg.url}
+              alt="NetEdit screenshot"
+              caption="NetEdit: Road Network and Traffic Infrastructure Editor"
+            />
           </Reveal>
           <Reveal delay={0.1}>
             <ol className="relative space-y-6 border-l border-cyan-brand/30 pl-6">
@@ -576,18 +654,13 @@ export function DemoSection() {
                   <div className="text-xs text-muted-foreground">Desktop app · Qt6 · PySide6</div>
                 </div>
               </div>
-              <div className="aspect-video w-full overflow-hidden rounded-2xl ring-1 ring-white/10">
-                <div className="grid h-full w-full place-items-center bg-[radial-gradient(ellipse_at_top_left,oklch(0.3_0.18_240/0.4),transparent_60%),linear-gradient(135deg,oklch(0.2_0.04_250),oklch(0.16_0.03_255))]">
-                  <div className="flex flex-col items-center gap-3 text-center">
-                    <div className="grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-[var(--blue)] to-[var(--cyan)] text-primary-foreground shadow-[var(--shadow-glow)]">
-                      <Cpu className="size-7" />
-                    </div>
-                    <div className="text-sm font-medium uppercase tracking-[0.2em] text-foreground/70">
-                      SUMO++ Application Screenshot
-                    </div>
-                    <div className="text-xs text-muted-foreground">Unified desktop interface</div>
-                  </div>
-                </div>
+              <div className="w-full">
+                <ScreenshotCard
+                  src={sumoppImg.url}
+                  alt="SUMO++ application screenshot"
+                  caption="SUMO++: Unified Traffic Simulation Platform Developed in this Project"
+                  featured
+                />
               </div>
             </div>
           </div>
